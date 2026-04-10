@@ -1,0 +1,41 @@
+{
+  "name": "react-a11y-auto-caption",
+  "version": "1.0.4",
+  "description": "Smart React component that automatically generates alt text for images using AI.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup && tsc --emitDeclarationOnly --declaration --declarationDir ./dist",
+    "dev": "tsup --watch"
+  },
+  "keywords": [
+    "react",
+    "accessibility",
+    "a11y",
+    "ai",
+    "image-captioning",
+    "alt-text"
+  ],
+  "author": "Gaeun Kim",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.2",
+    "next": "^15.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
+    "next": ">=13.0.0"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    }
+  }
+}
