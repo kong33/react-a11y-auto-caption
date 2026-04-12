@@ -14,7 +14,29 @@ export const SmartImageProvider: React.FC<{
   return <SmartImageContext.Provider value={value}>{children}</SmartImageContext.Provider>;
 };
 
-const captionCache = new Map<string, string>();
+const MAX_SIZE = 500;
+
+class LRUCaptionCache {
+  private cache = new Map<string, string>();
+
+  get(key: string): string | undefined {
+    return this.cache.get(key);
+  }
+  set(key: string, value: string) {
+    if (this.cache.size >= MAX_SIZE) {
+      this.cache.delete(this.cache.keys().next().value!);
+    }
+    this.cache.set(key, value);
+  }
+  has(key: string) {
+    return this.cache.has(key);
+  }
+  clear() {
+    this.cache.clear();
+  }
+}
+
+const captionCache = new LRUCaptionCache();
 const pendingRequestCache = new Map<string, Promise<string>>();
 
 export interface SmartImageProps extends ImgHTMLAttributes<HTMLImageElement> {
