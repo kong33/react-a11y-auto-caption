@@ -110,11 +110,11 @@ We provide a ready-to-use FastAPI reference server in [this repository.](https:/
 
 Depending on your architecture, choose one of the following integration methods:<br/>
 ---
-### Option A: Deploying our Standalone AI Microservice
-If you are deploying our Python FastAPI example server directly:<br/>
+### First step: Deploying our Standalone AI Microservice
 For security reasons, all cross-origin requests are blocked by default. <br/>
 You MUST set the ALLOWED_ORIGINS environment variable in your server's .env file<br/>
 to allow your frontend to communicate with it. <br/>
+
 
 ```python
 # For production
@@ -128,11 +128,20 @@ ALLOWED_ORIGINS=https://your-frontend-domain.com,https://your-frontend-domain2.c
 # .env file on your Python server
 ALLOWED_ORIGINS=http://localhost:3000
 ```
-> **Note:** Change the port if you are using Vite 5173 or another local server You can allow multiple environments simultaneously by separating them with a comma (no spaces).
+> **Note:** Change the port if you are using Vite 5173 or another local server. You can allow multiple environments simultaneously by separating them with a comma (no spaces).
 
+---
 
-### Option B: Integrating into Your Existing Backend (Recommended)
-If you already have a backend (Node.js, Spring, Django, etc.), <br/>
-simply copy the AI inference logic from our Python example. <br/>
-You can safely ignore our CORS middleware settings and rely on your existing server's security configurations.
+## Best Practice: Generate Once, Save, Reuse
+Generating captions on-the-fly for every user is slow. <br/>
+The industry standard is to generate the caption once and save it to your database:
 
+```tsx
+<SmartImage 
+  src={image.url}
+  alt={image.savedAlt} // If provided, the AI sleeps!
+  apiEndpoint="http://localhost:8000/api/generate-caption"
+  onCaptionGenerated={(text) => {
+    saveToDatabase(image.id, text); // Save permanently (You create your own database saving function based on your code.) 
+  }}
+/>
