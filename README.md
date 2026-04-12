@@ -1,6 +1,7 @@
 # react-a11y-auto-caption
 
-> A smart React & Next.js component that automatically generates highly accurate `alt` text for images using AI,<br/>
+> A smart React & Next.js component<br/>
+that automatically generates highly accurate `alt` text for images using AI,<br/>
 making your web applications instantly accessible (a11y) to everyone.
 
 [![npm version](https://img.shields.io/npm/v/react-a11y-auto-caption.svg)](https://www.npmjs.com/package/react-a11y-auto-caption)
