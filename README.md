@@ -1,8 +1,10 @@
 # react-a11y-auto-caption
 
-> A smart React & Next.js component<br/>
-that automatically generates highly accurate `alt` text for images using AI,<br/>
-making your web applications instantly accessible (a11y) to everyone.
+> A smart React & Next.js component <br/>
+that automatically generates highly accurate `alt` text for images using AI.<br/>
+**Generate captions effortlessly during local development, <br/>
+save them to your database, and serve 100% accessible images in production<br/>
+with zero API costs and zero latency.**
 
 [![npm version](https://img.shields.io/npm/v/react-a11y-auto-caption.svg)](https://www.npmjs.com/package/react-a11y-auto-caption)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -10,6 +12,8 @@ making your web applications instantly accessible (a11y) to everyone.
 
 ## Why use this library?
 
+- **Generate Once, Serve Forever (Best Practice):** Automatically generate captions during local development, easily save them to your database using the `onCaptionGenerated` callback, and completely bypass AI requests in production. 
+- **Cost-Free Local AI Server:** Comes with a ready-to-use, lightweight FastAPI Python server. It runs perfectly on your local machine, meaning you don't need to pay for expensive cloud GPUs or third-party API subscriptions (like OpenAI).
 - **Zero-Config Accessibility:** Automatically describes images for screen readers without manual data entry.
 - **First-Class Next.js Support:** Provides a dedicated `<SmartNextImage>` component optimized for Next.js.
 - **Smart Request Caching:** Built-in memory caching prevents duplicate API calls for the same image, saving your server costs.
