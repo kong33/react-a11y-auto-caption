@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ImgHTMLAttributes } from "react";
+import React, { createContext, useContext, useState, useEffect, ImgHTMLAttributes, useRef } from "react";
 
 interface SmartImageContextProps {
   apiEndpoint?: string;
@@ -65,6 +65,11 @@ export const SmartImage = ({
   const [generatedAlt, setGeneratedAlt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const onCaptionGeneratedRef = useRef(onCaptionGenerated);
+  useEffect(() => {
+    onCaptionGeneratedRef.current = onCaptionGenerated;
+  });
+
   useEffect(() => {
     if (alt) {
       setGeneratedAlt(alt);
@@ -85,7 +90,6 @@ export const SmartImage = ({
       setGeneratedAlt(fallbackAlt);
       return;
     }
-
     const imageUrl = src as string;
 
     if (captionCache.has(imageUrl)) {
@@ -93,18 +97,20 @@ export const SmartImage = ({
       const cachedCaption = captionCache.get(imageUrl)!;
       setGeneratedAlt(cachedCaption);
 
-      if (onCaptionGenerated) onCaptionGenerated(cachedCaption);
+      if (onCaptionGeneratedRef.current) onCaptionGeneratedRef.current(cachedCaption);
       return;
     }
+
+    let cancelled = false;
 
     const generateCaption = async () => {
       setIsGenerating(true);
       try {
         if (pendingRequestCache.has(imageUrl)) {
-          console.log("[SmartImage] Pending request detected. Waiting for the existing API call to complete.");
           const caption = await pendingRequestCache.get(imageUrl)!;
+          if (cancelled) return;
           setGeneratedAlt(caption);
-          if (onCaptionGenerated) onCaptionGenerated(caption);
+          if (onCaptionGeneratedRef.current) onCaptionGeneratedRef.current(caption);
           return;
         }
 
@@ -138,9 +144,11 @@ export const SmartImage = ({
         pendingRequestCache.delete(imageUrl);
         captionCache.set(imageUrl, newCaption);
 
+        if (cancelled) return;
+
         setGeneratedAlt(newCaption);
 
-        if (onCaptionGenerated) onCaptionGenerated(newCaption);
+        if (onCaptionGeneratedRef.current) onCaptionGeneratedRef.current(newCaption);
       } catch (error) {
         console.error("[SmartImage] Caption Error:", error);
         pendingRequestCache.delete(imageUrl);
@@ -151,7 +159,11 @@ export const SmartImage = ({
     };
 
     generateCaption();
-  }, [src, alt, apiEndpoint, fallbackAlt, onCaptionGenerated, disableAI]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [src, alt, apiEndpoint, fallbackAlt, disableAI]);
 
   const srOnlyStyle: React.CSSProperties = {
     position: "absolute",
