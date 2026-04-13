@@ -1,6 +1,6 @@
 {
   "name": "react-a11y-auto-caption",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Smart React component that automatically generates alt text for images using AI.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
