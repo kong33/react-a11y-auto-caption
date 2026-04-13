@@ -60,7 +60,7 @@ Set your backend API endpoint once globally. Otherwise, pass `apiEndpoint` direc
 
 ```tsx
 // App.tsx or layout.tsx
-import { SmartImageProvider } from 'react-a11y-auto-caption';
+import { SmartImageProvider } from "react-a11y-auto-caption";
 
 export default function App({ children }) {
   return (
