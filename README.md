@@ -89,7 +89,7 @@ pnpm add react-a11y-auto-caption
 ---
 ## Recommended workflow
 
-1. Generate captions during local development
+1. Generate captions during local development with light [python server](https://github.com/kong33/SmartImage)
 2. Save them to your database with `onCaptionGenerated`
 3. Pass the saved `alt` text in production
 4. Skip AI requests entirely for zero extra latency
