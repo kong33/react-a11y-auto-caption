@@ -1,51 +1,64 @@
 # react-a11y-auto-caption
 
-> A smart React & Next.js component <br/>
-that automatically generates highly accurate `alt` text for images using AI.<br/>
-**Generate captions effortlessly during local development, <br/>
-save them to your database, and serve 100% accessible images in production<br/>
-with zero API costs and zero latency.**
+> AI-powered alt text generation for React and Next.js images.
+> Generate captions during development, save them once, and reuse them in production for fast, accessible images.
 
 [![npm version](https://img.shields.io/npm/v/react-a11y-auto-caption.svg)](https://www.npmjs.com/package/react-a11y-auto-caption)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Accessibility](https://img.shields.io/badge/Accessibility-100%25-brightgreen.svg)]()
 
-## Why use this library?
+---
+## Why use react-a11y-auto-caption?
 
-- **Generate Once, Serve Forever (Best Practice):** Automatically generate captions during local development, easily save them to your database using the `onCaptionGenerated` callback, and completely bypass AI requests in production. 
-- **Cost-Free Local AI Server:** Comes with a ready-to-use, lightweight FastAPI Python server. It runs perfectly on your local machine, meaning you don't need to pay for expensive cloud GPUs or third-party API subscriptions (like OpenAI).
-- **Zero-Config Accessibility:** Automatically describes images for screen readers without manual data entry.
-- **First-Class Next.js Support:** Provides a dedicated `<SmartNextImage>` component optimized for Next.js.
-- **Smart Request Caching:** Built-in memory caching prevents duplicate API calls for the same image, saving your server costs.
-- **Concurrent Request Defense:** Safely handles simultaneous renders of the same image across multiple components.
-- **Global Provider Pattern:** Set your API endpoint once at the root level and forget about it.
-- **Developer Experience (DX):** Built-in test mode (`disableAI`) and intelligent console warnings for smooth debugging.
+- **Generate once, reuse forever** — create captions during development, save them, and skip AI calls in production.
+- **Built for accessibility** — automatically provide meaningful alt text for screen readers.
+- **Works with React and Next.js** — includes both `<SmartImage>` and `<SmartNextImage>`.
+- **Bring your own backend** — use your own FastAPI, Flask, or Node caption API.
+- **Production-friendly** — caching, duplicate-request protection, and error handling are built in.
 
 ---
 
-## Installation
-
-npm
-```bash
-npm install react-a11y-auto-caption
-```
-yarn berry
-```bash
-yarn add react-a11y-auto-caption
-```
-pnpm
-```bash
-pnpm add react-a11y-auto-caption
-```
-
----
 ## Quick Start
 
-### 1. Wrap your app with the Provider (Optional but Recommended) <br/>
-Set your backend API endpoint once globally. <br/>
-Otherwise, you can simply pass apiEndpoint as a prop when using `<SmartImage>` <br/>
+### React
 
-```ts
+```tsx
+import { SmartImage } from 'react-a11y-auto-caption';
+
+export default function Demo() {
+  return (
+    <SmartImage
+      src="https://example.com/image.jpg"
+      apiEndpoint="http://localhost:8000/api/generate-caption"
+    />
+  );
+}
+```
+
+### Next.js
+
+```tsx
+import { SmartNextImage } from 'react-a11y-auto-caption/next';
+import sampleImage from '../public/sample.jpg';
+
+export default function Demo() {
+  return (
+    <SmartNextImage
+      src={sampleImage}
+      width={500}
+      height={300}
+      apiEndpoint="http://localhost:8000/api/generate-caption"
+    />
+  );
+}
+```
+> **Optional**: set the API endpoint once with a Provider
+
+### Wrap your app with the Provider (Optional but Recommended)
+
+Set your backend API endpoint once globally. Otherwise, pass `apiEndpoint` directly as a prop.
+
+```tsx
 // App.tsx or layout.tsx
 import { SmartImageProvider } from 'react-a11y-auto-caption';
 
@@ -57,96 +70,100 @@ export default function App({ children }) {
   );
 }
 ```
-### 2. Use it in your components
-For Vanilla React (Vite, CRA):<br/>
-```ts
-import { SmartImage } from 'react-a11y-auto-caption';
 
-function Gallery() {
-  return (
-    <SmartImage 
-      src="[https://example.com/beautiful-landscape.jpg](https://example.com/beautiful-landscape.jpg)" 
-      announceLive={true} 
-    />
-  );
-}
-```
-
-For Next.js: <br/>
-```ts
-import { SmartNextImage } from 'react-a11y-auto-caption';
-import dogPic from '../public/dog.jpg';
-
-function NextGallery() {
-  return (
-    <SmartNextImage 
-      src={dogPic} 
-      width={500} 
-      height={300}
-      // You can override global settings per component
-      disableAI={process.env.NODE_ENV === 'development'} 
-    />
-  );
-}
-```
 ---
 
-## API Reference 
-Both `SmartImage` and `SmartNextImage` inherit all standard `<img>` / `next/image` props, plus the following: <br/>
-## API Reference (Props)
+## Installation
 
-Both `<SmartImage>` and `<SmartNextImage>` inherit all standard HTML `<img>` (or `next/image`) attributes. The following custom props are available:
+```bash
+# npm
+npm install react-a11y-auto-caption
+
+# yarn
+yarn add react-a11y-auto-caption
+
+# pnpm
+pnpm add react-a11y-auto-caption
+```
+
+---
+## Recommended workflow
+
+1. Generate captions during local development
+2. Save them to your database with `onCaptionGenerated`
+3. Pass the saved `alt` text in production
+4. Skip AI requests entirely for zero extra latency
+
+---
+
+## API Reference
+
+Both `<SmartImage>` and `<SmartNextImage>` inherit all standard HTML `<img>` (or `next/image`) attributes, plus the following:
 
 | Prop | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `apiEndpoint` | `string` | `undefined` | The URL of your AI backend API. Overrides the `SmartImageProvider`'s endpoint if provided. |
-| `alt` | `string` | `undefined` | Manual alt text. If provided, the AI generation is completely bypassed. |
-| `fallbackAlt` | `string` | `"Image loading or caption unavailable"` | The text displayed if the AI API request fails or times out. |
-| `disableAI` | `boolean` | `false` | Disables AI generation and uses a mock caption. Highly recommended for local development and testing. |
-| `announceLive` | `boolean` | `false` | Enables `aria-live` regions to dynamically announce the generation status to screen readers. |
-| `onCaptionGenerated`| `function` | `undefined` | Callback fired when a caption is successfully generated. `(caption: string) => void` |
+| `apiEndpoint` | `string` | `undefined` | The URL of your AI backend API. Overrides the `SmartImageProvider` endpoint if provided. |
+| `alt` | `string` | `undefined` | Manual alt text. If provided, AI generation is completely bypassed. |
+| `fallbackAlt` | `string` | `"Image loading or caption unavailable"` | Text used when the AI request fails or times out. |
+| `disableAI` | `boolean` | `false` | Disables AI generation and uses a mock caption. Recommended for testing. |
+| `announceLive` | `boolean` | `false` | Enables `aria-live` region to announce generation status to screen readers. |
+| `onCaptionGenerated` | `(caption: string) => void` | `undefined` | Callback fired when a caption is successfully generated. |
+| `onCaptionError` | `(error: Error) => void` | `undefined` | Callback fired when caption generation fails. Use for logging or toast notifications. |
 
-> **Note:** If you are using `<SmartNextImage>`, you must also provide standard required Next.js image props such as `width` and `height` (unless using `fill`).
----
-## Security & Backend Integration
-
-This package requires a backend to process the images through an AI model (like ViT-GPT2). <br/>
-We provide a ready-to-use FastAPI reference server in [this repository.](https://github.com/kong33/SmartImage)<br/>
-
-Depending on your architecture, choose one of the following integration methods:<br/>
----
-### First step: Deploying our Standalone AI Microservice
-For security reasons, all cross-origin requests are blocked by default. <br/>
-You MUST set the ALLOWED_ORIGINS environment variable in your server's .env file<br/>
-to allow your frontend to communicate with it. <br/>
-
-
-```python
-# For production
-
-# .env file on your Python server
-ALLOWED_ORIGINS=https://your-frontend-domain.com,https://your-frontend-domain2.com
-```
-```python
-# For local development
-
-# .env file on your Python server
-ALLOWED_ORIGINS=http://localhost:3000
-```
-> **Note:** Change the port if you are using Vite 5173 or another local server. You can allow multiple environments simultaneously by separating them with a comma (no spaces).
+> **Note:** `<SmartNextImage>` requires standard Next.js image props such as `width` and `height` (unless using `fill`).
 
 ---
 
-## Best Practice: Generate Once, Save, Reuse
-Generating captions on-the-fly for every user is slow. <br/>
-The industry standard is to generate the caption once and save it to your database:
+## Error Handling
+
+You can handle errors in two ways depending on your use case.
+
+**Via callback** — for external handling like logging or toasts:
 
 ```tsx
-<SmartImage 
-  src={image.url}
-  alt={image.savedAlt} // If provided, the AI sleeps!
-  apiEndpoint="http://localhost:8000/api/generate-caption"
-  onCaptionGenerated={(text) => {
-    saveToDatabase(image.id, text); // Save permanently (You create your own database saving function based on your code.) 
-  }}
+<SmartImage
+  src={imageUrl}
+  onCaptionError={(err) => toast.error(err.message)}
 />
+```
+
+**Via `useAICaptions` hook** — for UI branching:
+
+```tsx
+const { generatedAlt, isGenerating, error } = useAICaptions({ src });
+
+if (error) return <p>Failed to generate caption.</p>;
+```
+
+---
+
+## Security & Backend Integration
+
+This package requires a backend to process images through an AI model (e.g. ViT-GPT2). <br/>
+We provide a ready-to-use FastAPI reference server in [this repository](https://github.com/kong33/SmartImage).
+
+For security, all cross-origin requests are blocked by default. Set the `ALLOWED_ORIGINS` environment variable in your server's `.env` file:
+
+```bash
+# Production
+ALLOWED_ORIGINS=https://your-frontend-domain.com
+
+# Local development
+ALLOWED_ORIGINS=http://localhost:3000
+```
+
+> **Note:** Separate multiple origins with a comma and no spaces. Adjust the port if using Vite (`5173`) or another local server.
+
+
+---
+
+## What's New in v1.0.4
+
+- **LRU Cache:** Replaced unbounded `Map` cache with an LRU implementation to prevent memory leaks in long-running apps.
+- **`onCaptionError` callback:** New prop to handle caption generation failures externally (e.g. logging, toast notifications).
+- **`error` state:** `useAICaptions` hook now returns an `error` field so you can branch your UI on failure.
+- **Unmount safety:** Caption generation is now safely cancelled when a component unmounts, preventing stale state updates.
+- **Next.js static import support:** `<SmartNextImage>` now correctly resolves both `StaticImageData` and `StaticRequire` import types.
+- **Subpath exports:** Added `react-a11y-auto-caption/next` entry point for cleaner Next.js-specific imports.
+
+  
