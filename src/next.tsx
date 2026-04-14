@@ -44,7 +44,6 @@ export const SmartNextImage = ({
     onCaptionGenerated,
     disableAI: propsDisableAI,
     announceLive,
-    onCaptionError,
   });
   return (
     <>

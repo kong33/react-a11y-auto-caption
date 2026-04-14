@@ -48,7 +48,6 @@ export const SmartImage = ({
     apiEndpoint: propsEndpoint,
     fallbackAlt,
     onCaptionGenerated,
-    onCaptionError,
     disableAI: propsDisableAI,
     announceLive,
   });

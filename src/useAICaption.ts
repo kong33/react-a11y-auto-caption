@@ -8,9 +8,9 @@ export interface UseAICaptionOptions {
   apiEndpoint?: string;
   fallbackAlt?: string;
   onCaptionGenerated?: (caption: string) => void;
+  onCaptionError?: (error: Error) => void;
   disableAI?: boolean;
   announceLive?: boolean;
-  onCaptionError?: (error: Error) => void;
 }
 
 interface SmartImageContextProps {
@@ -26,9 +26,17 @@ class LRUCaptionCache {
   private cache = new Map<string, string>();
 
   get(key: string): string | undefined {
-    return this.cache.get(key);
+    if (!this.cache.has(key)) return undefined;
+
+    const value = this.cache.get(key)!;
+    this.cache.delete(key);
+    this.cache.set(key, value);
+    return value;
   }
   set(key: string, value: string) {
+    if (this.cache.has(key)) {
+      this.cache.delete(key);
+    }
     if (this.cache.size >= MAX_SIZE) {
       this.cache.delete(this.cache.keys().next().value!);
     }
@@ -44,14 +52,6 @@ class LRUCaptionCache {
 
 const captionCache = new LRUCaptionCache();
 const pendingRequestCache = new Map<string, Promise<string>>();
-
-export interface SmartImageProps extends ImgHTMLAttributes<HTMLImageElement> {
-  apiEndpoint?: string;
-  fallbackAlt?: string;
-  onCaptionGenerated?: (caption: string) => void;
-  disableAI?: boolean;
-  announceLive?: boolean;
-}
 
 function isStaticImageData(src: string | StaticImport): src is StaticImageData {
   return typeof src === "object" && src !== null && "src" in src;
