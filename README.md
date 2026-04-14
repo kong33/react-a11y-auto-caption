@@ -1,6 +1,6 @@
 # react-a11y-auto-caption
 
-> AI-powered alt text generation for React and Next.js images.
+> AI-powered alt text generation component for React and Next.js images.
 > Generate captions during development, save them once, and reuse them in production for fast, accessible images.
 
 [![npm version](https://img.shields.io/npm/v/react-a11y-auto-caption.svg)](https://www.npmjs.com/package/react-a11y-auto-caption)
