@@ -1,10 +1,11 @@
 import React, { ImgHTMLAttributes } from "react";
 import { SmartImageContext, useAICaptions } from "./useAICaption";
 
-export const SmartImageProvider: React.FC<{
+type smartImageProviderProps = {
   value: { apiEndpoint?: string; disableAI?: boolean };
   children: React.ReactNode;
-}> = ({ value, children }) => {
+};
+export const SmartImageProvider = ({ value, children }: smartImageProviderProps) => {
   return <SmartImageContext.Provider value={value}>{children}</SmartImageContext.Provider>;
 };
 
@@ -13,9 +14,9 @@ export interface SmartImageProps extends ImgHTMLAttributes<HTMLImageElement> {
   apiEndpoint?: string;
   fallbackAlt?: string;
   onCaptionGenerated?: (caption: string) => void;
+  onCaptionError?: (error: Error) => void;
   disableAI?: boolean;
   announceLive?: boolean;
-  onCaptionError?: (error: Error) => void;
 }
 
 const SR_ONLY_STYLE: React.CSSProperties = {
@@ -36,9 +37,9 @@ export const SmartImage = ({
   apiEndpoint: propsEndpoint,
   fallbackAlt = "Image loading or caption unavailable",
   onCaptionGenerated,
+  onCaptionError,
   disableAI: propsDisableAI,
   announceLive = false,
-  onCaptionError,
   ...props
 }: SmartImageProps) => {
   const { isGenerating, generatedAlt } = useAICaptions({
@@ -49,7 +50,6 @@ export const SmartImage = ({
     onCaptionGenerated,
     disableAI: propsDisableAI,
     announceLive,
-    onCaptionError,
   });
 
   return (
