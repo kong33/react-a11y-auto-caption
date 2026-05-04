@@ -105,6 +105,7 @@ Both `<SmartImage>` and `<SmartNextImage>` inherit all standard HTML `<img>` (or
 | `apiEndpoint` | `string` | `undefined` | The URL of your AI backend API. Overrides the `SmartImageProvider` endpoint if provided. |
 | `alt` | `string` | `undefined` | Manual alt text. If provided, AI generation is completely bypassed. |
 | `fallbackAlt` | `string` | `"Image loading or caption unavailable"` | Text used when the AI request fails or times out. |
+| `lazyGenerate` | `boolean` | `true` | Delays AI API calls until the image enters the viewport using `IntersectionObserver`.|
 | `disableAI` | `boolean` | `false` | Disables AI generation and uses a mock caption. Recommended for testing. |
 | `announceLive` | `boolean` | `false` | Enables `aria-live` region to announce generation status to screen readers. |
 | `onCaptionGenerated` | `(caption: string) => void` | `undefined` | Callback fired when a caption is successfully generated. |
