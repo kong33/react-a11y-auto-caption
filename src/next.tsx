@@ -13,6 +13,7 @@ export interface SmartNextImageProps extends Omit<ImageProps, "alt"> {
   onCaptionError?: (error: Error) => void;
   disableAI?: boolean;
   announceLive?: boolean;
+  lazyGenerate?: boolean;
 }
 export const SR_ONLY_STYLE: React.CSSProperties = {
   position: "absolute",
@@ -34,9 +35,10 @@ export const SmartNextImage = ({
   onCaptionError,
   disableAI: propsDisableAI,
   announceLive = false,
+  lazyGenerate = true,
   ...props
 }: SmartNextImageProps) => {
-  const { isGenerating, generatedAlt } = useAICaptions({
+  const { isGenerating, generatedAlt, announcement, imgRef } = useAICaptions({
     src,
     alt,
     apiEndpoint: propsEndpoint,
@@ -44,20 +46,17 @@ export const SmartNextImage = ({
     onCaptionGenerated,
     disableAI: propsDisableAI,
     announceLive,
+    lazyGenerate,
   });
   return (
     <>
       {announceLive && (
         <span style={SR_ONLY_STYLE} aria-live="polite" aria-atomic="true">
-          {isGenerating
-            ? "Generating image description. Please wait..."
-            : generatedAlt
-              ? `Image description generated: ${generatedAlt}`
-              : ""}
+          {announcement}
         </span>
       )}
 
-      <Image src={src} alt={generatedAlt || fallbackAlt} aria-busy={isGenerating} {...props} />
+      <Image src={src} ref={imgRef} alt={generatedAlt || fallbackAlt} aria-busy={isGenerating} {...props} />
     </>
   );
 };
