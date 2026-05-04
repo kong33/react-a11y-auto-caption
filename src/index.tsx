@@ -17,6 +17,7 @@ export interface SmartImageProps extends ImgHTMLAttributes<HTMLImageElement> {
   onCaptionError?: (error: Error) => void;
   disableAI?: boolean;
   announceLive?: boolean;
+  lazyGenerate?: boolean;
 }
 
 const SR_ONLY_STYLE: React.CSSProperties = {
@@ -40,9 +41,10 @@ export const SmartImage = ({
   onCaptionError,
   disableAI: propsDisableAI,
   announceLive = false,
+  lazyGenerate = true,
   ...props
 }: SmartImageProps) => {
-  const { isGenerating, generatedAlt } = useAICaptions({
+  const { isGenerating, generatedAlt, announcement, imgRef } = useAICaptions({
     src,
     alt,
     apiEndpoint: propsEndpoint,
@@ -50,20 +52,17 @@ export const SmartImage = ({
     onCaptionGenerated,
     disableAI: propsDisableAI,
     announceLive,
+    lazyGenerate,
   });
 
   return (
     <>
       {announceLive && (
         <span style={SR_ONLY_STYLE} aria-live="polite" aria-atomic="true">
-          {isGenerating
-            ? "Generating image description. Please wait..."
-            : generatedAlt
-              ? `Image description generated: ${generatedAlt}`
-              : ""}
+          {announcement}
         </span>
       )}
-      <img src={src} alt={generatedAlt} aria-busy={isGenerating} {...props} />
+      <img src={src} ref={imgRef} alt={generatedAlt} aria-busy={isGenerating} {...props} />
     </>
   );
 };
