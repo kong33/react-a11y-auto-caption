@@ -1,6 +1,6 @@
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { StaticImageData } from "next/image";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, lazy, useContext, useEffect, useRef, useState } from "react";
 
 export interface UseAICaptionOptions {
   src?: string | StaticImport;
@@ -11,6 +11,7 @@ export interface UseAICaptionOptions {
   onCaptionError?: (error: Error) => void;
   disableAI?: boolean;
   announceLive?: boolean;
+  lazyGenerate?: boolean;
 }
 
 interface SmartImageContextProps {
@@ -73,6 +74,8 @@ export const useAICaptions = ({
   onCaptionGenerated,
   disableAI: propsDisableAI,
   onCaptionError,
+  announceLive = false,
+  lazyGenerate = true,
 }: UseAICaptionOptions) => {
   const context = useContext(SmartImageContext);
 
@@ -82,14 +85,41 @@ export const useAICaptions = ({
   const [generatedAlt, setGeneratedAlt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-
+  const [announcement, setAnnouncemet] = useState("");
+  const [shouldGenerate, setShouldGenerate] = useState(!lazyGenerate);
   const onCaptionGeneratedRef = useRef(onCaptionGenerated);
   const onCaptionErrorRef = useRef(onCaptionError);
 
+  const imgRef = useRef < HTMLImageElement | null>(null);
+
+  
   useEffect(() => {
     onCaptionGeneratedRef.current = onCaptionGenerated;
     onCaptionErrorRef.current = onCaptionError;
   });
+
+  useEffect(() => {
+    if (!announcement) return;
+    const timer = setTimeout(() => setAnnouncemet(""), 5000);
+    return () => clearTimeout(timer)
+  }, [announcement])
+  
+  useEffect(() => {
+    if (!lazyGenerate || !imgRef.current) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldGenerate(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "200px" }
+    );
+    observer.observe(imgRef.current);
+    return () => observer.disconnect();
+  }, [lazyGenerate])
+
 
   useEffect(() => {
     setError(null);
@@ -99,7 +129,7 @@ export const useAICaptions = ({
       return;
     }
 
-    if (!src) return;
+    if (!src || !shouldGenerate) return;
 
     if (disableAI) {
       setGeneratedAlt("[Testing mode: AI caption generation disabled]");
@@ -186,5 +216,5 @@ export const useAICaptions = ({
     };
   }, [src, alt, apiEndpoint, fallbackAlt, disableAI]);
 
-  return { generatedAlt, isGenerating, error };
+  return { generatedAlt, isGenerating, error, imgRef, announcement };
 };
