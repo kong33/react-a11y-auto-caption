@@ -8,6 +8,7 @@ type smartImageProviderProps = {
 export const SmartImageProvider = ({ value, children }: smartImageProviderProps) => {
   return <SmartImageContext.Provider value={value}>{children}</SmartImageContext.Provider>;
 };
+export * from './useAICaption';
 
 export interface SmartImageProps extends ImgHTMLAttributes<HTMLImageElement> {
   src?: string;
