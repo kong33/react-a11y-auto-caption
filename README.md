@@ -138,23 +138,49 @@ if (error) return <p>Failed to generate caption.</p>;
 
 ---
 
-## Security & Backend Integration
+## Backend Integration
 
-This package requires a backend to process images through an AI model (e.g. ViT-GPT2). <br/>
-We provide a ready-to-use FastAPI reference server in [this repository](https://github.com/kong33/SmartImage).
+This package needs a caption API endpoint to generate alt text.
 
-For security, all cross-origin requests are blocked by default. Set the `ALLOWED_ORIGINS` environment variable in your server's `.env` file:
+The easiest way is to run the official local server:
 
 ```bash
-# Production
-ALLOWED_ORIGINS=https://your-frontend-domain.com
-
-# Local development
-ALLOWED_ORIGINS=http://localhost:3000
+npx react-a11y-auto-caption-server
 ```
 
-> **Note:** Separate multiple origins with a comma and no spaces. Adjust the port if using Vite (`5173`) or another local server.
+By default, the server runs at:
 
+```txt
+http://127.0.0.1:8000/api/generate-caption
+```
+
+Use it with `SmartImage` or `SmartNextImage`:
+
+```tsx
+<SmartImage
+  src="/example.jpg"
+  apiEndpoint="http://127.0.0.1:8000/api/generate-caption"
+/>
+```
+
+You can also change the port:
+
+```bash
+npx react-a11y-auto-caption-server --port 5000
+```
+
+Then update the endpoint:
+
+```tsx
+<SmartImage
+  src="/example.jpg"
+  apiEndpoint="http://127.0.0.1:5000/api/generate-caption"
+/>
+```
+
+> First run may take a few minutes because the server creates a Python environment and installs AI dependencies.
+
+For production, we recommend running your own caption server and applying CORS restrictions, file size limits, and rate limiting.
 
 ---
 
