@@ -142,6 +142,15 @@ if (error) return <p>Failed to generate caption.</p>;
 
 This package needs a caption API endpoint to generate alt text.
 
+We offer a public demo server for testing. Set API endpoint as:
+
+```bash
+https://kong3333-react-a11y-auto-caption-server.hf.space/api/generate-caption
+```
+
+> This public demo server is for testing only and may be slow or unavailable depending on free-tier limits.
+> For production, please run your own caption server.
+
 The easiest way is to run the official local server:
 
 ```bash
