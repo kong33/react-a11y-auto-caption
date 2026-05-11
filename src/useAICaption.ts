@@ -103,6 +103,10 @@ export const useAICaptions = ({
     const timer = setTimeout(() => setAnnouncemet(""), 5000);
     return () => clearTimeout(timer)
   }, [announcement])
+
+  useEffect(() => {
+  setShouldGenerate(!lazyGenerate);
+  }, [src, lazyGenerate]);
   
   useEffect(() => {
     if (!lazyGenerate || !imgRef.current) return;
@@ -118,7 +122,7 @@ export const useAICaptions = ({
     );
     observer.observe(imgRef.current);
     return () => observer.disconnect();
-  }, [lazyGenerate])
+  }, [lazyGenerate, src])
 
 
   useEffect(() => {
@@ -214,7 +218,7 @@ export const useAICaptions = ({
     return () => {
       cancelled = true;
     };
-  }, [src, alt, apiEndpoint, fallbackAlt, disableAI]);
+  }, [src, alt, apiEndpoint, fallbackAlt, disableAI, shouldGenerate]);
 
   return { generatedAlt, isGenerating, error, imgRef, announcement };
 };
